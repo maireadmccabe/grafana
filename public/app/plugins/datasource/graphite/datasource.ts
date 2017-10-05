@@ -1,9 +1,6 @@
 ///<reference path="../../../headers/common.d.ts" />
 
-import angular from 'angular';
 import _ from 'lodash';
-import moment from 'moment';
-
 import * as dateMath from 'app/core/utils/datemath';
 
 /** @ngInject */
@@ -205,7 +202,7 @@ export function GraphiteDatasource(instanceSettings, $q, backendSrv, templateSrv
 
   this.testDatasource = function() {
     return this.metricFindQuery('*').then(function () {
-      return { status: "success", message: "Data source is working", title: "Success" };
+      return { status: "success", message: "Data source is working"};
     });
   };
 

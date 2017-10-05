@@ -1,13 +1,13 @@
 ///<reference path="../../../headers/common.d.ts" />
 
-import 'jquery.flot';
-import 'jquery.flot.selection';
-import 'jquery.flot.time';
-import 'jquery.flot.stack';
-import 'jquery.flot.stackpercent';
-import 'jquery.flot.fillbelow';
-import 'jquery.flot.crosshair';
-import 'jquery.flot.dashes';
+import 'vendor/flot/jquery.flot';
+import 'vendor/flot/jquery.flot.selection';
+import 'vendor/flot/jquery.flot.time';
+import 'vendor/flot/jquery.flot.stack';
+import 'vendor/flot/jquery.flot.stackpercent';
+import 'vendor/flot/jquery.flot.fillbelow';
+import 'vendor/flot/jquery.flot.crosshair';
+import 'vendor/flot/jquery.flot.dashes';
 import './jquery.flot.events';
 
 import $ from 'jquery';
@@ -21,7 +21,8 @@ import {ThresholdManager} from './threshold_manager';
 import {EventManager} from 'app/features/annotations/all';
 import {convertValuesToHistogram, getSeriesValues} from './histogram';
 
-coreModule.directive('grafanaGraph', function($rootScope, timeSrv, popoverSrv) {
+/** @ngInject **/
+function graphDirective($rootScope, timeSrv, popoverSrv) {
   return {
     restrict: 'A',
     template: '',
@@ -120,6 +121,8 @@ coreModule.directive('grafanaGraph', function($rootScope, timeSrv, popoverSrv) {
         if (panelWidth === 0) {
           return true;
         }
+
+        return false;
       }
 
       function drawHook(plot) {
@@ -146,16 +149,12 @@ coreModule.directive('grafanaGraph', function($rootScope, timeSrv, popoverSrv) {
 
         // add left axis labels
         if (panel.yaxes[0].label && panel.yaxes[0].show) {
-          var yaxisLabel = $("<div class='axisLabel left-yaxis-label flot-temp-elem'></div>")
-          .text(panel.yaxes[0].label)
-          .appendTo(elem);
+          $("<div class='axisLabel left-yaxis-label flot-temp-elem'></div>").text(panel.yaxes[0].label).appendTo(elem);
         }
 
         // add right axis labels
         if (panel.yaxes[1].label && panel.yaxes[1].show) {
-          var rightLabel = $("<div class='axisLabel right-yaxis-label flot-temp-elem'></div>")
-          .text(panel.yaxes[1].label)
-          .appendTo(elem);
+          $("<div class='axisLabel right-yaxis-label flot-temp-elem'></div>").text(panel.yaxes[1].label).appendTo(elem);
         }
 
         thresholdManager.draw(plot);
@@ -389,6 +388,7 @@ coreModule.directive('grafanaGraph', function($rootScope, timeSrv, popoverSrv) {
         if (legendSideLastValue !== null && panel.legend.rightSide !== legendSideLastValue) {
           return true;
         }
+        return false;
       }
 
       function addTimeAxis(options) {
@@ -619,12 +619,6 @@ coreModule.directive('grafanaGraph', function($rootScope, timeSrv, popoverSrv) {
         return ticks;
       }
 
-      function decimalPlaces(num) {
-        if (!num) { return 0; }
-
-        return (num.toString().split('.')[1] || []).length;
-      }
-
       function configureAxisMode(axis, format) {
         axis.tickFormatter = function(val, axis) {
           return kbn.valueFormats[format](val, axis.tickDecimals, axis.scaledDecimals);
@@ -690,4 +684,6 @@ coreModule.directive('grafanaGraph', function($rootScope, timeSrv, popoverSrv) {
       });
     }
   };
-});
+}
+
+coreModule.directive('grafanaGraph', graphDirective);
